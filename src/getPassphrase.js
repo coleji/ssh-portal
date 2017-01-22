@@ -28,12 +28,11 @@ module.exports = function(filename) {
 			rl.question(query, function(value) {
 				rl.history = rl.history.slice(1);
 				rl.close();
-				process.stdin.destroy();
 				callback(value);
 			});
 		}
 
-		hidden("password : ", function(password) {
+		hidden("Enter passphrase for " + filename + ": ", function(password) {
 			resolve(password);
 		});
 	});

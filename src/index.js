@@ -1,32 +1,35 @@
 var getPassphrase = require("./getPassphrase");
+var openConnectionAndExecute = require("./openConnectionAndExecute");
 
-getPassphrase("test1").then(passphrase => {
-	console.log("got '" + passphrase + "'")
-}, err => {
-	console.log(err)
+var fs = require('fs');
+var ini = require('ini');
+
+var iniSettings = ini.parse(fs.readFileSync('./ini/private.ini', 'utf-8'));
+var server = iniSettings["0,0"]
+var keys = iniSettings.keys
+console.log(server)
+console.log(keys)
+
+var passphrases = {};
+
+// TODO: This assumes exactly two keys defined, "personal" and "cbi"
+// until I can figure out how to execute n promises in sequence
+getPassphrase(keys.personal).then(v => {
+	passphrases.personal = v;
+	return getPassphrase(keys.cbi);
+}).then(v => {
+	passphrases.cbi = v;
+	return openConnectionAndExecute({
+		host: server.host,
+		port: server.port,
+		username: server.user,
+		privateKey: require('fs').readFileSync(keys[server.key]),
+		passphrase: passphrases[server.key]
+	}, "pwd");
+}).then(stdout => {
+	console.log("SSH SESSION RETURNED: " + stdout);
+}).catch(err => {
+	console.log(err);
+}).then(() => {
+	process.stdin.destroy();
 })
-
-/*
-var Client = require('ssh2').Client;
-
-var conn = new Client();
-conn.on('ready', function() {
-	console.log('Client :: ready');
-	conn.shell(function(err, stream) {
-		if (err) throw err;
-		stream.on('close', function() {
-			console.log('Stream :: close');
-			conn.end();
-		}).on('data', function(data) {
-			console.log('STDOUT: ' + data);
-		}).stderr.on('data', function(data) {
-			console.log('STDERR: ' + data);
-		});
-		stream.end('ls -l\nexit\n');
-	});
-}).connect({
-	host: '10.0.0.17',
-	port: 22,
-	username: 'jcole',
-	privateKey: require('fs').readFileSync('/home/jcole/.ssh/jcole-personal-2017-01-01')
-});*/
