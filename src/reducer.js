@@ -3,8 +3,12 @@ import { routeReducer } from 'react-router-redux';
 import {reducer as reduxAsyncConnect} from 'redux-async-connect';
 import {reducer as form} from 'redux-form';
 
+import serverList from './containers/ServerGrid/reducer.js';
+
 export default combineReducers({
 	routing: routeReducer,
 	reduxAsyncConnect,
-	form
+	form,
+	serverList,
+	config : (state = {}) => state
 });

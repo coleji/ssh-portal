@@ -1,7 +1,6 @@
 import http from 'http';
-import config from '../src/config';
 
-var makeAPIRequest = function(params) {
+var makeAPIRequest = function(config, params) {
 	return new Promise((resolve, reject) => {
 		let options = {
 			hostname: 'localhost',
@@ -36,9 +35,9 @@ var makeAPIRequest = function(params) {
 	});
 };
 
-var createActionFromAPIResponse = function(params) {
+var createActionFromAPIResponse = function(config, params) {
 	return new Promise((resolve, reject) => {
-		makeAPIRequest({
+		makeAPIRequest(config, {
 			apiEndpoint: params.apiEndpoint,
 			httpMethod: params.httpMethod,
 			postData: params.postData

@@ -5,6 +5,7 @@ import http from 'http';
 import SocketIo from 'socket.io';
 
 import config from '../src/config';
+import route from './router';
 const app = express();
 
 const server = new http.Server(app);
@@ -22,12 +23,13 @@ app.use(session({
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
+	res.setHeader('Access-Control-Allow-Origin', 'http://' + config.host + ':' + config.port);
+	res.setHeader('Access-Control-Allow-Credentials', 'true');
 	if (req.method != 'OPTIONS') {
 		next();
 		return;
 	}
-	res.setHeader('Access-Control-Allow-Origin', 'http://' + config.host + ':' + config.port);
-	res.setHeader('Access-Control-Allow-Credentials', 'true');
+
 	res.setHeader('Access-Control-Allow-Headers', [
 		'Content-Type',
 		'Content-Length'
@@ -35,12 +37,7 @@ app.use((req, res, next) => {
 	res.status(200).end();
 });
 
-app.use((req, res) => {
-	res.setHeader('Access-Control-Allow-Origin', 'http://' + config.host + ':' + config.port);
-	res.setHeader('Access-Control-Allow-Credentials', 'true');
-
-	res.status(404).end('NOT FOUND');
-});
+app.use(route);
 
 /*
 const bufferSize = 100;
