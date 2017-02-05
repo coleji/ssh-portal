@@ -17,14 +17,23 @@ const sendCommand = function(iniData, serverName) {
 	});
 };
 
+const getKeyList = function(iniData) {
+	var keyList = [];
+	for (var p in iniData.keys) {
+		keyList.push(p);
+	}
+	return keyList;
+};
+
 export default function(req, res) {
-	console.log(req.url);
 	var urlComponents = req.url.split('/');
 	urlComponents.splice(0,1);
-	console.log(urlComponents.join(','));
 	switch (urlComponents[0]) {
 	case "serverlist":
 		res.send({ data: { serverList : getServerList(req.iniData)}});
+		break;
+	case "keyList":
+		res.send({data: { keyList : getKeyList(req.iniData)}});
 		break;
 	case "dryrun":
 		sendCommand(req.iniData, urlComponents[1]).then(msg => {

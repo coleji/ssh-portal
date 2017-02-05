@@ -1,6 +1,6 @@
 import { createActionFromAPIResponse } from '../../../core/api-client';
 
-var getServerList = function(dispatch, config) {
+const getServerList = function(dispatch, config) {
 	createActionFromAPIResponse(config, {
 		httpMethod: 'GET',
 		apiEndpoint : '/serverlist',
@@ -15,6 +15,22 @@ var getServerList = function(dispatch, config) {
 	});
 };
 
+const getKeyList = function(dispatch, config) {
+	createActionFromAPIResponse(config, {
+		httpMethod: 'GET',
+		apiEndpoint : '/keyList',
+		stateItemName : 'keyList'
+	}).then((data) => {
+		dispatch({
+			type: 'GET_KEY_LIST',
+			keyList : data.keyList
+		});
+	}).catch(e => {
+		console.log(e);
+	});
+};
+
 export {
-	getServerList
+	getServerList,
+	getKeyList
 };

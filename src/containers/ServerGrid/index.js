@@ -1,18 +1,23 @@
 import React from 'react';
 import { connect } from 'react-redux'; //eslint-disable-line no-unused-vars
 
-import { getServerList } from './action-creators';
+import { getServerList, getKeyList } from './action-creators';
+import Server from './Server';
+import KeyList from './KeyList';
 
-const doAlert = () => alert("test");
 
 @connect(
 	state => ({
 		config : state.config,
-		serverList : state.serverList || []
+		serverList : state.serverList || [],
+		keyList : state.keyList || []
 	}),
 	dispatch => ({
 		getServerList: (config) => {
 			getServerList(dispatch, config);
+		},
+		getKeyList: (config) => {
+			getKeyList(dispatch, config);
 		}
 	})
 )
@@ -22,19 +27,22 @@ class ServerGrid extends React.Component {
 	}
 	componentDidMount() {
 		this.props.getServerList(this.props.config);
+		this.props.getKeyList(this.props.config);
 	}
 	render() {
 		return (
-			<table><tbody>
-			{this.props.serverList.map((row, i) =>
-				<tr key={i}>{row.map(col =>
-					<td key={col}>
-						<textarea style={{height:"350px", width:"850px"}}></textarea><br />
-						<input type="button" value="Blah" onClick={doAlert}/>
-					</td>
-				)}</tr>
-			)}
-			</tbody></table>
+			<div>
+				<KeyList keyList={this.props.keyList}/><br />
+				<table><tbody>
+					{this.props.serverList.map((row, i) =>
+						<tr key={i}>{row.map(col =>
+							<td key={col}>
+								<Server alias={col} />
+							</td>
+						)}</tr>
+					)}
+				</tbody></table>
+			</div>
 		);
 	}
 }
