@@ -3,9 +3,13 @@ import express from 'express';
 import session from 'express-session';
 import http from 'http';
 import SocketIo from 'socket.io';
+import ini from 'ini';
+import fs from 'fs';
 
 import config from '../src/config';
-import route from './router';
+import route from '../src/api';
+
+const iniData = ini.parse(fs.readFileSync('./ini/private.ini', 'utf-8'));
 const app = express();
 
 const server = new http.Server(app);
@@ -21,6 +25,8 @@ app.use(session({
 }));
 
 app.use(bodyParser.json());
+
+app.use((req, res, next) => { req.iniData = iniData; next(); });
 
 app.use((req, res, next) => {
 	res.setHeader('Access-Control-Allow-Origin', 'http://' + config.host + ':' + config.port);

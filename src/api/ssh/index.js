@@ -1,14 +1,27 @@
+import connectionManager from './connectionManager';
+import getPassphrase from './getPassphrase';
+import openConnectionAndExecute from './openConnectionAndExecute';
+
+
+export {
+	connectionManager,
+	getPassphrase,
+	openConnectionAndExecute
+};
+
+
+/*
 var getPassphrase = require("./getPassphrase");
 var openConnectionAndExecute = require("./openConnectionAndExecute");
 
 var fs = require('fs');
 var ini = require('ini');
 
-var iniSettings = ini.parse(fs.readFileSync('./ini/private.ini', 'utf-8'));
-var server = iniSettings["0,0"]
-var keys = iniSettings.keys
-console.log(server)
-console.log(keys)
+var iniSettings = ini.parse(fs.readFileSync('../ini/private.ini', 'utf-8'));
+var server = iniSettings["0,0"];
+var keys = iniSettings.keys;
+console.log(server);
+console.log(keys);
 
 var passphrases = {};
 
@@ -32,4 +45,5 @@ getPassphrase(keys.personal).then(v => {
 	console.log(err);
 }).then(() => {
 	process.stdin.destroy();
-})
+});
+*/

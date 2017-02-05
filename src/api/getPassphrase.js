@@ -1,7 +1,7 @@
 var readline = require('readline');
 
 module.exports = function(filename) {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		var rl = readline.createInterface({
 			input: process.stdin,
 			output: process.stdout
@@ -19,7 +19,7 @@ module.exports = function(filename) {
 					stdin.pause();
 					break;
 				default:
-					process.stdout.write("\033[2K\033[200D" + query + "[" + ((i % 2 == 1) ? "=-" : "-=") + "]");
+					process.stdout.write("\u001B[2K\u001B[200D" + query + "[" + ((i % 2 == 1) ? "=-" : "-=") + "]");
 					i++;
 					break;
 				}
@@ -36,4 +36,4 @@ module.exports = function(filename) {
 			resolve(password);
 		});
 	});
-}
+};
