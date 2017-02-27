@@ -30,7 +30,39 @@ const getKeyList = function(dispatch, config) {
 	});
 };
 
+const unlockKey = function(dispatch, config, alias, passphrase) {
+	console.log("sending " + passphrase);
+	createActionFromAPIResponse(config, {
+		httpMethod: 'POST',
+		apiEndpoint : '/unlock',
+		postData: { alias, passphrase }
+	}).then(() => {
+		getKeyList(dispatch, config);
+	}).catch(e => {
+		console.log(e);
+	});
+};
+
+const getUpdates = function(dispatch, config, alias) {
+	console.log("getting updates for " + alias);
+	createActionFromAPIResponse(config, {
+		httpMethod: 'GET',
+		apiEndpoint : '/getUpdates/'+ alias,
+		stateItemName : 'response'
+	}).then((data) => {
+		dispatch({
+			type: 'SSH_RESPONSE',
+			alias,
+			response : data.response
+		});
+	}).catch(e => {
+		console.log(e);
+	});
+};
+
 export {
 	getServerList,
-	getKeyList
+	getKeyList,
+	unlockKey,
+	getUpdates
 };

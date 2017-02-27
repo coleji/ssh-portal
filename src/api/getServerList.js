@@ -6,7 +6,7 @@ export default function(iniData) {
 		var row = +regexResult[1];
 		var col = +regexResult[2];
 		byRowThenCol[row] = byRowThenCol[row] || [];
-		byRowThenCol[row][col] = iniData[prop].alias;
+		byRowThenCol[row][col] = { alias: iniData[prop].alias, response : null };
 	}
 	return byRowThenCol;
 }

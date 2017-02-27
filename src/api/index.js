@@ -1,26 +1,17 @@
 import getServerList from './getServerList';
-import findServerConfig from './findServerConfigByName';
-import getPassphrase from './getPassphrase';
+import openConnectionAndExecute from './ssh/openConnectionAndExecute';
+import findServerConfigByName from './findServerConfigByName';
+import fs from 'fs';
 
 var passphrases = {};
-
-const sendCommand = function(iniData, serverName) {
-	console.log("!! " + serverName);
-	var server = findServerConfig(iniData, serverName);
-	return Promise.resolve().then(() => {
-		if (!passphrases[server.key]) {
-			return getPassphrase(iniData.keys[server.key]).then(passphrase => {
-				passphrases[server.key] = passphrase;
-				return Promise.resolve();
-			});
-		} else return Promise.resolve();
-	});
-};
 
 const getKeyList = function(iniData) {
 	var keyList = [];
 	for (var p in iniData.keys) {
-		keyList.push(p);
+		keyList.push({
+			alias: p,
+			unlocked: (undefined !== passphrases[p])
+		});
 	}
 	return keyList;
 };
@@ -35,12 +26,20 @@ export default function(req, res) {
 	case "keyList":
 		res.send({data: { keyList : getKeyList(req.iniData)}});
 		break;
-	case "dryrun":
-		sendCommand(req.iniData, urlComponents[1]).then(msg => {
-			res.send(msg);
+	case "unlock":
+		console.log("recevied unlock post, alias was " + req.body.alias + ", passphrase was " + req.body.passphrase);
+		passphrases[req.body.alias] = req.body.passphrase;
+		res.send({data: {}});
+		break;
+	case "getUpdates":
+		var serverConfig = findServerConfigByName(req.iniData, urlComponents[1]);
+		serverConfig.privateKey = fs.readFileSync(req.iniData.keys[serverConfig.key]);
+		serverConfig.passphrase = passphrases[serverConfig.key];
+		openConnectionAndExecute(serverConfig, "apt-get dist-upgrade --assume-no").then(response => {
+			res.send({data: {response}});
 		}, err => {
-			console.log(err);
-			res.send("error!");
+			console.log("%%%% " + err);
+			res.send({data: {response: "Error: " + err}});
 		});
 		break;
 	default:

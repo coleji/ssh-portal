@@ -37,7 +37,7 @@ class ServerGrid extends React.Component {
 					{this.props.serverList.map((row, i) =>
 						<tr key={i}>{row.map(col =>
 							<td key={col}>
-								<Server alias={col} />
+								<Server alias={col.alias} response={col.response} />
 							</td>
 						)}</tr>
 					)}
