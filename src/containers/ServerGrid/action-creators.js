@@ -60,9 +60,27 @@ const getUpdates = function(dispatch, config, alias) {
 	});
 };
 
+const update = function(dispatch, config, alias) {
+	console.log("getting updates for " + alias);
+	createActionFromAPIResponse(config, {
+		httpMethod: 'GET',
+		apiEndpoint : '/update/'+ alias,
+		stateItemName : 'response'
+	}).then((data) => {
+		dispatch({
+			type: 'SSH_RESPONSE',
+			alias,
+			response : data.response
+		});
+	}).catch(e => {
+		console.log(e);
+	});
+};
+
 export {
 	getServerList,
 	getKeyList,
 	unlockKey,
-	getUpdates
+	getUpdates,
+	update
 };

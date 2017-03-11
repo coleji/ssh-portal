@@ -42,6 +42,17 @@ export default function(req, res) {
 			res.send({data: {response: "Error: " + err}});
 		});
 		break;
+	case "update":
+		var serverConfig = findServerConfigByName(req.iniData, urlComponents[1]);
+		serverConfig.privateKey = fs.readFileSync(req.iniData.keys[serverConfig.key]);
+		serverConfig.passphrase = passphrases[serverConfig.key];
+		openConnectionAndExecute(serverConfig, "apt-get dist-upgrade -y").then(response => {
+			res.send({data: {response}});
+		}, err => {
+			console.log("%%%% " + err);
+			res.send({data: {response: "Error: " + err}});
+		});
+		break;
 	default:
 		res.send("Unknown endpoint");
 	}
