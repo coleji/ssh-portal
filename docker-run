@@ -1,0 +1,11 @@
+docker run \
+-d \
+-e SSH_USER=username \
+-e SSH_HOST=hostname \
+-e SSH_OPTS='-tt -g -L 80:localhost:80 -i ~/.ssh/my-key' \
+-v /path/to/.ssh:/root/.ssh \
+-p 80:80 \
+--net=some-net \
+--name=ssh-portal \
+--restart=always \
+coleji/ssh-portal
